@@ -23,6 +23,15 @@ use hole::HoleList;
 #[cfg(feature = "use_spin")]
 use spinning_top::Spinlock;
 
+#[cfg(feature = "use_defmt")]
+extern crate defmt;
+
+#[cfg(feature = "use_defmt")]
+use defmt::assert;
+
+#[cfg(not(feature = "use_defmt"))]
+use core::assert;
+
 pub mod hole;
 #[cfg(test)]
 mod test;

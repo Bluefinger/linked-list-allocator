@@ -8,6 +8,12 @@ use crate::{align_down_size, align_up_size};
 
 use super::align_up;
 
+#[cfg(feature = "use_defmt")]
+use defmt::{assert, assert_eq, debug_assert, debug_assert_eq};
+
+#[cfg(not(feature = "use_defmt"))]
+use core::{assert, assert_eq, debug_assert, debug_assert_eq};
+
 /// A sorted list of holes. It uses the the holes itself to store its nodes.
 pub struct HoleList {
     pub(crate) first: Hole, // dummy
@@ -662,9 +668,20 @@ fn deallocate(list: &mut HoleList, addr: *mut u8, size: usize) {
         Err(mut cursor) => {
             // Nope. It lives somewhere else. Advance the list until we find its home
             while let Err(()) = cursor.try_insert_after(hole) {
-                cursor = cursor
-                    .next()
-                    .expect("Reached end of holes without finding deallocation hole!");
+                #[cfg(feature = "use_defmt")]
+                {
+                    cursor = defmt::unwrap!(
+                        cursor.next(),
+                        "Reached end of holes without finding deallocation hole!"
+                    );
+                }
+
+                #[cfg(not(feature = "use_defmt"))]
+                {
+                    cursor = cursor
+                        .next()
+                        .expect("Reached end of holes without finding deallocation hole!");
+                }
             }
             // Great! We found a home for it, our cursor is now JUST BEFORE the new
             // node we inserted, so we need to try to merge up to twice: One to combine

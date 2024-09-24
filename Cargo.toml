@@ -21,9 +21,14 @@ use_spin_nightly = ["use_spin"]
 alloc_ref = []
 # deprecated - no effect
 const_mut_refs = []
+use_defmt = ["defmt"]
 
 [dependencies.spinning_top]
 version = "0.2.5"
+optional = true
+
+[dependencies.defmt]
+version = "0.3"
 optional = true
 
 [lints.rust]

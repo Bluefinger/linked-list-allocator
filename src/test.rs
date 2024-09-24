@@ -8,6 +8,8 @@ use std::{
     prelude::v1::*,
 };
 
+use core::{assert, assert_eq};
+
 #[repr(align(128))]
 struct Chonk<const N: usize> {
     data: MaybeUninit<[u8; N]>,
